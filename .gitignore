@@ -1,0 +1,10 @@
+logs/
+__pycache__/
+.vscode/
+.nox/
+build/
+dist/
+*.egg-info/
+.coverage
+.pytest_cache/
+.mypy_cache/
