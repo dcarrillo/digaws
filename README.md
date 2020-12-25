@@ -4,6 +4,12 @@ The digaws lookup tool displays information for a given IP address (v4 o v6) or 
 In order to save bandwidth and time this tool requests the [AWS IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json) and keeps
 a cached version until a new version is published.
 
+## Requirements
+
+Python >= 3.7
+
+Tests are verified on Linux, macos and Windows.
+
 ## Install
 
 ```bash
@@ -12,7 +18,7 @@ pip install digaws
 
 ## Usage
 
-```bash
+```text
 usage: digaws [-h] [--output <plain|json>] [--debug] <ip address|cidr> [<ip address|cidr> ...]
 
 Look up canonical information for AWS IP addresses and networks
@@ -31,7 +37,7 @@ optional arguments:
 
 - look up an IPv4 address
 
-```bash
+```text
 ~ » digaws 52.218.97.130
 
 Prefix: 52.218.0.0/17
@@ -47,7 +53,7 @@ Network border group: eu-west-1
 
 - look up an IPv6 address
 
-```bash
+```text
 ~ » digaws 2600:1f1e:fff:f810:a29b:cb50:2812:e2dc
 
 IPv6 Prefix: 2600:1f1e::/36
@@ -68,7 +74,7 @@ Network border group: sa-east-1
 
 - look up several addresses and print output as json
 
-```bash
+```text
 ~ » digaws 2600:1f14::/36 13.224.119.88 --output json
 
 [
