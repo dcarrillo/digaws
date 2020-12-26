@@ -11,7 +11,10 @@ import tests
 
 @pytest.fixture
 def test_dig():
-    return digaws.DigAWS(json.loads(tests.AWS_IP_RANGES))
+    return digaws.DigAWS(ip_ranges=json.loads(
+        tests.AWS_IP_RANGES),
+        output_fields=digaws.OUTPUT_FIELDS
+    )
 
 
 def test_cli(capsys):
@@ -42,6 +45,25 @@ def test_cli_invocation(capsys, mocker):
     out, _ = capsys.readouterr()
 
     assert out == tests.RESPONSE_JSON_JOINED_PRINT
+
+
+def test_cli_output_plain_fields_invocation(capsys, mocker):
+    sys.argv = ['digaws', '52.94.76.0/22', '--output=plain', '--output-fields', 'region']
+    mocker.patch('digaws.digaws.get_aws_ip_ranges', return_value=json.loads(tests.AWS_IP_RANGES))
+    digaws.main()
+    out, _ = capsys.readouterr()
+
+    assert out == 'Region: us-west-2\n\n'
+
+
+def test_cli_output_json_fields_invocation(capsys, mocker):
+    sys.argv = ['digaws', '2600:1f14:fff:f810:a1c1:f507:a2d1:2dd8', '--output=json',
+                '--output-fields', 'service', 'network_border_group']
+    mocker.patch('digaws.digaws.get_aws_ip_ranges', return_value=json.loads(tests.AWS_IP_RANGES))
+    digaws.main()
+    out, _ = capsys.readouterr()
+
+    assert out == tests.RESPONSE_JSON_FIELDS_PRINT
 
 
 def test_dig_aws_construct(test_dig):
