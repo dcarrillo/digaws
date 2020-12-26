@@ -111,6 +111,18 @@ RESPONSE_JSON_PRINT = '''[
 ]
 '''
 
+RESPONSE_JSON_FIELDS_PRINT = '''[
+  {
+    "service": "ROUTE53_HEALTHCHECKS",
+    "network_border_group": "us-west-2"
+  },
+  {
+    "service": "EC2",
+    "network_border_group": "us-west-2"
+  }
+]
+'''
+
 RESPONSE_JSON_JOINED_PRINT = '''[
   {
     "ip_prefix": "52.94.76.0/22",

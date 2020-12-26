@@ -20,6 +20,7 @@ from . import __version__
 AWS_IP_RANGES_URL = 'https://ip-ranges.amazonaws.com/ip-ranges.json'
 CACHE_DIR = Path(Path.home() / '.digaws')
 CACHE_FILE = CACHE_DIR / 'ip-ranges.json'
+OUTPUT_FIELDS = ['prefix', 'region', 'service', 'network_border_group']
 
 logger = logging.getLogger()
 handler = logging.StreamHandler(sys.stderr)
@@ -87,19 +88,23 @@ class UnexpectedRequestException(Exception):
 
 
 class DigAWSPrettyPrinter:
-    def __init__(self, data: List[Dict], output_filter: List[str] = []):
+    def __init__(self, data: List[Dict], output_fields: List[str] = []):
         self.data = data
-        self.output_filter = output_filter
+        self.output_fields = output_fields
 
     def plain_print(self) -> None:
         for prefix in self.data:
-            try:
-                print(f'Prefix: {prefix["ip_prefix"]}')
-            except KeyError:
-                print(f'IPv6 Prefix: {prefix["ipv6_prefix"]}')
-            print(f'Region: {prefix["region"]}')
-            print(f'Service: {prefix["service"]}')
-            print(f'Network border group: {prefix["network_border_group"]}')
+            if 'prefix' in self.output_fields:
+                try:
+                    print(f'Prefix: {prefix["ip_prefix"]}')
+                except KeyError:
+                    print(f'IPv6 Prefix: {prefix["ipv6_prefix"]}')
+            if 'region' in self.output_fields:
+                print(f'Region: {prefix["region"]}')
+            if 'service' in self.output_fields:
+                print(f'Service: {prefix["service"]}')
+            if 'network_border_group' in self.output_fields:
+                print(f'Network border group: {prefix["network_border_group"]}')
             print('')
 
     def json_print(self) -> None:
@@ -110,22 +115,26 @@ class DigAWSPrettyPrinter:
                 prefix_type = 'ip_prefix'
             except KeyError:
                 prefix_type = 'ipv6_prefix'
-            data.append(
-                {
-                    prefix_type: str(prefix[prefix_type]),
-                    'region': prefix['region'],
-                    'service': prefix['service'],
-                    'network_border_group': prefix['network_border_group']
-                }
-            )
+
+            item_dict = {}
+            if 'prefix' in self.output_fields:
+                item_dict.update({prefix_type: str(prefix[prefix_type])})
+            if 'region' in self.output_fields:
+                item_dict.update({'region': prefix['region']})
+            if 'service' in self.output_fields:
+                item_dict.update({'service': prefix['service']})
+            if 'network_border_group' in self.output_fields:
+                item_dict.update({'network_border_group': prefix['network_border_group']})
+            data.append(item_dict)
+
         if data:
             print(json.dumps(data, indent=2))
 
 
 class DigAWS():
-    def __init__(self, ip_ranges: Dict, output: str = 'plain', output_filter: List[str] = []):
+    def __init__(self, *, ip_ranges: Dict, output: str = 'plain', output_fields: List[str] = []):
         self.output = output
-        self.output_filter = output_filter
+        self.output_fields = output_fields
         self.ip_prefixes = [
             {
                 'ip_prefix': ipaddress.IPv4Network(prefix['ip_prefix']),
@@ -148,7 +157,7 @@ class DigAWS():
     def lookup(self, address: str) -> DigAWSPrettyPrinter:
         return DigAWSPrettyPrinter(
             self._lookup_data(address),
-            self.output_filter
+            self.output_fields
         )
 
     def _lookup_data(self, address: str) -> List[Dict]:
@@ -194,6 +203,15 @@ def arguments_parser() -> argparse.ArgumentParser:
         help='Formatting style for command output, by default %(default)s'
     )
     parser.add_argument(
+        '--output-fields',
+        nargs='*',
+        choices=OUTPUT_FIELDS,
+        required=False,
+        dest='output_fields',
+        default=OUTPUT_FIELDS,
+        help='Print only the given fields'
+    )
+    parser.add_argument(
         '--debug',
         action='store_true',
         required=False,
@@ -225,7 +243,7 @@ def main():
 
     try:
         ip_ranges = get_aws_ip_ranges()
-        dig = DigAWS(ip_ranges)
+        dig = DigAWS(ip_ranges=ip_ranges, output_fields=args.output_fields)
 
         responses = []
         for address in args.addresses:
@@ -242,7 +260,7 @@ def main():
                 for response in responses:
                     joined += response.data
 
-                DigAWSPrettyPrinter(joined).json_print()
+                DigAWSPrettyPrinter(joined, args.output_fields).json_print()
     except (
             RequestException,
             ipaddress.AddressValueError,

@@ -19,7 +19,7 @@ pip install digaws
 ## Usage
 
 ```text
-usage: digaws [-h] [--output <plain|json>] [--debug] <ip address|cidr> [<ip address|cidr> ...]
+usage: digaws [-h] [--output <plain|json>] [--output-fields [{prefix,region,service,network_border_group} ...]] [--debug] [--version] <ip address|cidr> [<ip address|cidr> ...]
 
 Look up canonical information for AWS IP addresses and networks
 
@@ -30,7 +30,10 @@ optional arguments:
   -h, --help            show this help message and exit
   --output <plain|json>
                         Formatting style for command output, by default plain
+  --output-fields [{prefix,region,service,network_border_group} ...]
+                        Print only the given fields
   --debug               Enable debug
+  --version             show program's version number and exit
 ```
 
 ## Examples
@@ -103,4 +106,15 @@ Network border group: sa-east-1
     "network_border_group": "GLOBAL"
   }
 ]
+```
+
+- Choose output fields
+
+```text
+~ » digaws 34.255.166.63 --output-fields service
+
+Service: AMAZON
+
+Service: EC2
+
 ```
