@@ -73,12 +73,14 @@ def test_dig_aws_construct(test_dig):
 
 def test_lookup(test_dig):
     assert str(test_dig._lookup_data('52.94.76.1')[0]['ip_prefix']) == '52.94.76.0/22'
-    assert str(test_dig._lookup_data('52.94.76.0/24')[0]['ip_prefix']) == '52.94.76.0/22'
+    if sys.version_info.major == 3 and sys.version_info.minor > 6:
+        assert str(test_dig._lookup_data('52.94.76.0/24')[0]['ip_prefix']) == '52.94.76.0/22'
 
     input = '2600:1f14:fff:f810:a1c1:f507:a2d1:2dd8'
     assert str(test_dig._lookup_data(input)[0]['ipv6_prefix']) == '2600:1f14:fff:f800::/53'
     assert str(test_dig._lookup_data(input)[1]['ipv6_prefix']) == '2600:1f14::/35'
-    assert str(test_dig._lookup_data('2600:1f14::/36')[0]['ipv6_prefix']) == '2600:1f14::/35'
+    if sys.version_info.major == 3 and sys.version_info.minor > 6:
+        assert str(test_dig._lookup_data('2600:1f14::/36')[0]['ipv6_prefix']) == '2600:1f14::/35'
 
     with pytest.raises(ValueError) as e:
         test_dig._lookup_data('what are you talking about')
@@ -93,10 +95,11 @@ def test_python36_cidr_lookup(test_dig):
 
 
 def test_response_plain_print(test_dig, capsys):
-    test_dig.lookup('52.94.76.0/22').plain_print()
-    out, _ = capsys.readouterr()
+    if sys.version_info.major == 3 and sys.version_info.minor > 6:
+        test_dig.lookup('52.94.76.0/22').plain_print()
+        out, _ = capsys.readouterr()
 
-    assert out == tests.RESPONSE_PLAIN_PRINT
+        assert out == tests.RESPONSE_PLAIN_PRINT
 
 
 def test_response_json_print(test_dig, capsys):
