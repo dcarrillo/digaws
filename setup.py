@@ -17,7 +17,7 @@ setup(
     url='http://github.com/dcarrillo/digaws',
     author='Daniel Carrillo',
     author_email='daniel.carrillo@gmail.com',
-    license='MIT',
+    license='Apache Software License',
     packages=['digaws'],
     zip_safe=False,
     classifiers=[
