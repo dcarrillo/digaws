@@ -81,8 +81,15 @@ def test_lookup(test_dig):
     assert str(test_dig._lookup_data('2600:1f14::/36')[0]['ipv6_prefix']) == '2600:1f14::/35'
 
     with pytest.raises(ValueError) as e:
-        test_dig.lookup('what are you talking about')
-        assert e.startswith('Wrong IP or CIDR format')
+        test_dig._lookup_data('what are you talking about')
+    assert e.match('Wrong IP or CIDR format')
+
+
+def test_python36_cidr_lookup(test_dig):
+    if sys.version_info.major == 3 and sys.version_info.minor == 6:
+        with pytest.raises(ValueError) as e:
+            test_dig._lookup_data('52.94.76.0/22')
+        assert e.match('python 3.6 does not support subnet_of checking')
 
 
 def test_response_plain_print(test_dig, capsys):

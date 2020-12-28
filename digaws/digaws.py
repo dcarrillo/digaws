@@ -14,8 +14,7 @@ from dateutil import tz
 import requests
 from requests.exceptions import RequestException
 
-from . import __description__
-from . import __version__
+from . import __description__, __version__
 
 AWS_IP_RANGES_URL = 'https://ip-ranges.amazonaws.com/ip-ranges.json'
 CACHE_DIR = Path(Path.home() / '.digaws')
@@ -172,6 +171,10 @@ class DigAWS():
                 data = [prefix for prefix in self.ipv6_prefixes
                         if addr in prefix['ipv6_prefix']]
             except ipaddress.AddressValueError:
+                if sys.version_info.major == 3 and sys.version_info.minor == 6:
+                    raise ValueError('python 3.6 does not support subnet_of checking, '
+                                     'please upgrade your python version or do not query '
+                                     f'CIDRs: {address}')
                 try:
                     addr = ipaddress.IPv4Network(address)
                     data = [prefix for prefix in self.ip_prefixes
