@@ -84,4 +84,5 @@ def test_get_aws_ip_ranges_invalid_status(mocker, fs, create_cache_dir) -> None:
 
     with pytest.raises(digaws.UnexpectedRequestException) as e:
         digaws.get_aws_ip_ranges()
-        assert e.startswith('Unexpected response from')
+
+    assert e.match('^Unexpected response from')
