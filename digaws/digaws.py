@@ -127,8 +127,7 @@ class DigAWSPrettyPrinter:
                 item_dict.update({'network_border_group': prefix['network_border_group']})
             data.append(item_dict)
 
-        if data:
-            print(json.dumps(data, indent=2))
+        print(json.dumps(data, indent=2))
 
 
 class DigAWS():
