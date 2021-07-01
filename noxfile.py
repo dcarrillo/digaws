@@ -1,10 +1,12 @@
 import nox
 
+
 nox.options.sessions = ['lint', 'typing', 'tests']
 locations = ['noxfile.py', 'setup.py', 'digaws/', 'tests/']
 
 lint_common_args = ['--max-line-length', '120']
-mypy_args = ['--ignore-missing-imports']
+mypy_args = ['--ignore-missing-imports', '--install-types', '--non-interactive']
+
 pytest_args = ['--cov=digaws', '--cov-report=', 'tests/']
 coverage_args = ['report', '--show-missing', '--fail-under=80']
 
