@@ -4,8 +4,8 @@ The digaws lookup tool displays information for a given IP address (v4 o v6) or 
 In order to save bandwidth and time this tool requests the [AWS IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json) and keeps
 a cached version until a new version is published.
 
-![PyPI version](https://badge.fury.io/py/digaws.svg)
-![CI](https://github.com/dcarrillo/digaws/workflows/CI/badge.svg)
+[![PyPI version](https://badge.fury.io/py/digaws.svg)](https://pypi.org/project/digaws/)
+[![CI](https://github.com/dcarrillo/digaws/workflows/CI/badge.svg)](https://github.com/dcarrillo/digaws/actions)
 
 ## Requirements
 
