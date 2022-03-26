@@ -1,6 +1,6 @@
 # digaws
 
-The digaws lookup tool displays information for a given IP address (v4 o v6) or a CIDR, sourced from the AWS official IP ranges.
+The digaws lookup tool displays information for a given IP address (both v4 and v6) or a CIDR, sourced from the AWS official IP ranges.
 In order to save bandwidth and time this tool requests the [AWS IP ranges](https://ip-ranges.amazonaws.com/ip-ranges.json) and keeps
 a cached version until a new version is published.
 
@@ -15,8 +15,16 @@ Tests are verified on Linux, macos and Windows.
 
 ## Install
 
+### Using [pipx](https://pypa.github.io/pipx/#install-pipx) (this is the preferred way)
+
 ```bash
-pip install digaws
+pipx install digaws
+```
+
+### Using pip
+
+```bash
+pip install digaws --user
 ```
 
 ## Usage
