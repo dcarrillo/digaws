@@ -181,7 +181,7 @@ class DigAWS():
                         data = [prefix for prefix in self.ipv6_prefixes
                                 if addr.subnet_of(prefix['ipv6_prefix'])]
                     except (ipaddress.AddressValueError, ValueError):
-                        raise(ValueError(f'Wrong IP or CIDR format: {address}'))
+                        raise ValueError(f'Wrong IP or CIDR format: {address}')
 
         return data
 
