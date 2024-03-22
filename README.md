@@ -9,7 +9,7 @@ a cached version until a new version is published.
 
 ## Requirements
 
-Python >= 3.7
+Python >= 3.8
 
 Tests are verified on Linux, macos and Windows.
 
