@@ -97,7 +97,7 @@ def test_lookup(test_dig):
 
     with pytest.raises(ValueError) as e:
         test_dig.lookup("what are you talking about")
-        assert e.startswith("Wrong IP or CIDR format")
+    assert str(e.value).startswith("Wrong IP or CIDR format")
 
 
 def test_response_plain_print(test_dig, capsys):
