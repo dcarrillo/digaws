@@ -1,2 +1,2 @@
-__version__ = '1.0.6'
-__description__ = 'Look up canonical information for AWS IP addresses and networks'
+__version__ = "1.0.7"
+__description__ = "Look up canonical information for AWS IP addresses and networks"
