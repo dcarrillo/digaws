@@ -1,0 +1,77 @@
+[project]
+name = "digaws"
+version = "1.0.8"
+description = "Look up canonical information for AWS IP addresses and networks"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache Software License" }
+authors = [
+    { name = "Daniel Carrillo", email = "daniel.carrillo@gmail.com" }
+]
+keywords = ["aws", "ip", "network", "dns", "lookup"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "python-dateutil~=2.9",
+    "requests~=2.25",
+]
+
+[project.urls]
+Homepage = "http://github.com/dcarrillo/digaws"
+Repository = "http://github.com/dcarrillo/digaws"
+
+[project.scripts]
+digaws = "digaws.digaws:main"
+
+[dependency-groups]
+test = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pyfakefs",
+]
+lint = [
+    "ruff",
+]
+typing = [
+    "mypy",
+    "types-python-dateutil>=2.9.0.20241206",
+    "types-requests>=2.32.0.20241016",
+]
+dev = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pyfakefs",
+    "ruff",
+    "mypy",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "N", "B", "A", "C4"]
+ignore = []
+
+[tool.mypy]
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=digaws --cov-report=term-missing"
+testpaths = ["tests"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80

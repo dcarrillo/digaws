@@ -90,9 +90,9 @@ def test_lookup(test_dig):
     assert str(test_dig._lookup_data("52.94.76.1")[0]["ip_prefix"]) == "52.94.76.0/22"
     assert str(test_dig._lookup_data("52.94.76.0/24")[0]["ip_prefix"]) == "52.94.76.0/22"
 
-    input = "2600:1f14:fff:f810:a1c1:f507:a2d1:2dd8"
-    assert str(test_dig._lookup_data(input)[0]["ipv6_prefix"]) == "2600:1f14:fff:f800::/53"
-    assert str(test_dig._lookup_data(input)[1]["ipv6_prefix"]) == "2600:1f14::/35"
+    ipv6_addr = "2600:1f14:fff:f810:a1c1:f507:a2d1:2dd8"
+    assert str(test_dig._lookup_data(ipv6_addr)[0]["ipv6_prefix"]) == "2600:1f14:fff:f800::/53"
+    assert str(test_dig._lookup_data(ipv6_addr)[1]["ipv6_prefix"]) == "2600:1f14::/35"
     assert str(test_dig._lookup_data("2600:1f14::/36")[0]["ipv6_prefix"]) == "2600:1f14::/35"
 
     with pytest.raises(ValueError) as e:
