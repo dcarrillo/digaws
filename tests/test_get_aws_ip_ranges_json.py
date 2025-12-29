@@ -49,7 +49,7 @@ def test_get_aws_ip_ranges_cached_invalid_file(mocker, fs, create_cache_dir) -> 
     response.status_code = 304
     mocker.patch("requests.get", return_value=response)
 
-    with pytest.raises(digaws.CachedFileException):
+    with pytest.raises(digaws.CachedFileError):
         digaws.get_aws_ip_ranges()
 
 
@@ -80,7 +80,7 @@ def test_get_aws_ip_ranges_invalid_status(mocker, fs, create_cache_dir) -> None:
     response.status_code = 301
     mocker.patch("requests.get", return_value=response)
 
-    with pytest.raises(digaws.UnexpectedRequestException) as e:
+    with pytest.raises(digaws.UnexpectedRequestError) as e:
         digaws.get_aws_ip_ranges()
 
     assert str(e.value).startswith("Unexpected response from")

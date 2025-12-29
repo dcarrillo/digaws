@@ -9,13 +9,23 @@ a cached version until a new version is published.
 
 ## Requirements
 
-Python >= 3.8
+Python >= 3.10
 
 Tests are verified on Linux, macos and Windows.
 
 ## Install
 
-### Using [pipx](https://pypa.github.io/pipx/#install-pipx) (this is the preferred way)
+### Using [uv](https://docs.astral.sh/uv/) (recommended)
+
+```bash
+# Install globally
+uv tool install digaws
+
+# Run directly
+uv tool run digaws <ip_address>
+```
+
+### Using [pipx](https://pypa.github.io/pipx/#install-pipx)
 
 ```bash
 pipx install digaws

@@ -7,7 +7,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import requests
 from dateutil import tz
@@ -27,7 +27,7 @@ handler.setFormatter(logging.Formatter("-- %(levelname)s -- %(message)s"))
 logger.setLevel(logging.INFO)
 
 
-def get_aws_ip_ranges() -> Dict:
+def get_aws_ip_ranges() -> dict:
     CACHE_DIR.mkdir(exist_ok=True)
 
     headers = {}
@@ -49,14 +49,14 @@ def get_aws_ip_ranges() -> Dict:
                 logger.debug(f"reading cached file {CACHE_FILE}")
                 with open(CACHE_FILE) as ip_ranges:
                     return json.load(ip_ranges)
-            except (OSError, IOError, json.JSONDecodeError) as e:
+            except (OSError, json.JSONDecodeError) as e:
                 logger.debug(f"ERROR reading {CACHE_FILE}: {e}")
-                raise CachedFileException(str(e))
+                raise CachedFileError(str(e)) from e
         elif response.status_code == 200:
             try:
                 with open(CACHE_FILE, "w") as f:
                     f.write(response.text)
-            except (OSError, IOError) as e:
+            except OSError as e:
                 logger.warning(e)
 
             return response.json()
@@ -66,41 +66,41 @@ def get_aws_ip_ranges() -> Dict:
                 f"{response.status_code}. Content: {response.text}"
             )
             logger.debug(msg)
-            raise UnexpectedRequestException(msg)
+            raise UnexpectedRequestError(msg)
     except RequestException as e:
         logger.debug(f"ERROR retrieving {AWS_IP_RANGES_URL}: {e}")
         raise e
 
 
-class CachedFileException(Exception):
+class CachedFileError(Exception):
     def __init__(self, message: str):
         message = f"Error reading cached ranges {CACHE_FILE}: {message}"
-        super(CachedFileException, self).__init__(message)
+        super().__init__(message)
 
 
-class UnexpectedRequestException(Exception):
+class UnexpectedRequestError(Exception):
     def __init__(self, message: str):
-        super(UnexpectedRequestException, self).__init__(message)
+        super().__init__(message)
 
 
 class DigAWSPrettyPrinter:
-    def __init__(self, data: List[Dict], output_fields: List[str] = []):
+    def __init__(self, data: list[dict], output_fields: list[str] | None = None):
         self.data = data
-        self.output_fields = output_fields
+        self.output_fields = output_fields if output_fields is not None else []
 
     def plain_print(self) -> None:
         for prefix in self.data:
             if "prefix" in self.output_fields:
                 try:
-                    print(f'Prefix: {prefix["ip_prefix"]}')
+                    print(f"Prefix: {prefix['ip_prefix']}")
                 except KeyError:
-                    print(f'IPv6 Prefix: {prefix["ipv6_prefix"]}')
+                    print(f"IPv6 Prefix: {prefix['ipv6_prefix']}")
             if "region" in self.output_fields:
-                print(f'Region: {prefix["region"]}')
+                print(f"Region: {prefix['region']}")
             if "service" in self.output_fields:
-                print(f'Service: {prefix["service"]}')
+                print(f"Service: {prefix['service']}")
             if "network_border_group" in self.output_fields:
-                print(f'Network border group: {prefix["network_border_group"]}')
+                print(f"Network border group: {prefix['network_border_group']}")
             print("")
 
     def json_print(self) -> None:
@@ -127,9 +127,11 @@ class DigAWSPrettyPrinter:
 
 
 class DigAWS:
-    def __init__(self, *, ip_ranges: Dict, output: str = "plain", output_fields: List[str] = []):
+    def __init__(
+        self, *, ip_ranges: dict, output: str = "plain", output_fields: list[str] | None = None
+    ):
         self.output = output
-        self.output_fields = output_fields
+        self.output_fields = output_fields if output_fields is not None else []
         self.ip_prefixes = [
             {
                 "ip_prefix": ipaddress.IPv4Network(prefix["ip_prefix"]),
@@ -152,7 +154,7 @@ class DigAWS:
     def lookup(self, address: str) -> DigAWSPrettyPrinter:
         return DigAWSPrettyPrinter(self._lookup_data(address), self.output_fields)
 
-    def _lookup_data(self, address: str) -> List[Dict]:
+    def _lookup_data(self, address: str) -> list[dict]:
         addr: Any = None
         try:
             addr = ipaddress.IPv4Address(address)
@@ -176,7 +178,7 @@ class DigAWS:
                             if addr.subnet_of(prefix["ipv6_prefix"])
                         ]
                     except (ipaddress.AddressValueError, ValueError):
-                        raise ValueError(f"Wrong IP or CIDR format: {address}")
+                        raise ValueError(f"Wrong IP or CIDR format: {address}") from None
 
         return data
 
@@ -213,7 +215,7 @@ def arguments_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {version}".format(version=__version__),
+        version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
         "addresses",
@@ -256,8 +258,8 @@ def main():
         RequestException,
         ipaddress.AddressValueError,
         ValueError,
-        CachedFileException,
-        UnexpectedRequestException,
+        CachedFileError,
+        UnexpectedRequestError,
     ) as e:
         print(f"ERROR: {e}")
         sys.exit(1)
